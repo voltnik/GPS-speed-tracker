@@ -30,6 +30,7 @@ long now_millis, lcd_millis, serial_millis; // миллисекунды для �
 byte num_ekr = 0 ;                        // номер отображения экрана
 double dist_LAT, dist_LNG, last_LAT, last_LNG, max_LAT, max_LNG;                // переменные расстояния в EEPROM
 float distToPoint, max_spd, max_dist, distance;
+boolean fix;
 TinyGPSDate dd; 
 TinyGPSTime tt;
 
@@ -77,13 +78,14 @@ void loop()
     dd = gps.date; 
     tt = gps.time;
     if (gps.location.isValid()) { // проверка на FIX и отсутствие нулей в координатах
-      if ((gps.location.lat()!=0)or(gps.location.lng()!=0)) {
+      if ((gps.location.lat()!=1)or(gps.location.lng()!=1)) {
         distToPoint = (float)TinyGPSPlus::distanceBetween(gps.location.lat(),gps.location.lng(),dist_LAT,dist_LNG) / 1000;
-        if (distToPoint>max_dist) {max_dist=distToPoint; max_LAT = gps.location.lat(); max_LNG = gps.location.lng(); }
+        if ((distToPoint>max_dist)and(distToPoint-max_dist<100)) {max_dist=distToPoint; max_LAT = gps.location.lat(); max_LNG = gps.location.lng(); fix=1;}
         if (gps.speed.kmph()>max_spd) max_spd=gps.speed.kmph();  
-        if ((last_LAT != 0)and(gps.speed.kmph()>1)) {distance = distance + (float)TinyGPSPlus::distanceBetween(gps.location.lat(), gps.location.lng(), last_LAT, last_LNG) / 1000;}
+        if ((last_LAT != 0)and(fix)and(gps.speed.kmph()>1)) {distance = distance + (float)TinyGPSPlus::distanceBetween(gps.location.lat(), gps.location.lng(), last_LAT, last_LNG) / 1000; }
         last_LAT = gps.location.lat();
         last_LNG = gps.location.lng();    
+        fix=0;
       }  
     } 
     printInt(gps.satellites.value(), gps.satellites.isValid(), 5);
@@ -104,7 +106,7 @@ void loop()
     printInt(gps.charsProcessed(), true, 6);
     printInt(gps.sentencesWithFix(), true, 10);
     printInt(gps.failedChecksum(), true, 9);
-    Serial.print("Max dist: "); Serial.print(max_dist,3); Serial.print(" MAX_LAT: "); Serial.print(max_LAT,6); Serial.print(" MAX_LNG: "); Serial.println(max_LNG,6); 
+    Serial.print("Odo: "); Serial.print(distance,3); Serial.print(" MaxD: "); Serial.print(max_dist,3); Serial.print(" MAX_LAT: "); Serial.print(max_LAT,6); Serial.print(" MAX_LNG: "); Serial.println(max_LNG,6); 
     serial_millis = now_millis;
   }  
 
