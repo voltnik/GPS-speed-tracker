@@ -16,7 +16,6 @@ YOUTUBE: https://www.youtube.com/channel/UC4s13gPVOMQVX3P1ZpdUwjA
 #define RXPin 4  // UART подключение GPS
 #define TXPin 3  // UART подключение GPS
 #define BUTN1 7  // пин кнопки1
-#define BUTN2 8  // пин кнопки2
 #define OLED_RENEW 500  // как часто обновлять экран
 #define SERIAL_RENEW 1000  // как часто обновлять данные на serial
 #define GPSBaud 9600 // скорость обмена с GPS часто именно 9600, но встречается и 4800
@@ -26,11 +25,10 @@ TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);
 SSD1306AsciiWire oled;
 OneButton butn_1(BUTN1, true);
-OneButton butn_2(BUTN2, true);
 //==============================================================
 long now_millis, lcd_millis, serial_millis; // миллисекунды для отсчета обновления
 byte num_ekr = 0 ;                        // номер отображения экрана
-double dist_LAT, dist_LNG, last_LAT, last_LNG;                // переменные расстояния в EEPROM
+double dist_LAT, dist_LNG, last_LAT, last_LNG, max_LAT, max_LNG;                // переменные расстояния в EEPROM
 float distToPoint, max_spd, max_dist, distance;
 TinyGPSDate dd; 
 TinyGPSTime tt;
@@ -69,7 +67,6 @@ void loop()
 {
   now_millis = millis();
   butn_1.tick(); // тик опроса кнопки 1
-  butn_2.tick(); // тик опроса кнопки 2
   
   if (now_millis - lcd_millis > OLED_RENEW) { // обновление экрана
     oled_print();
@@ -82,7 +79,7 @@ void loop()
     if (gps.location.isValid()) { // проверка на FIX и отсутствие нулей в координатах
       if ((gps.location.lat()!=0)or(gps.location.lng()!=0)) {
         distToPoint = (float)TinyGPSPlus::distanceBetween(gps.location.lat(),gps.location.lng(),dist_LAT,dist_LNG) / 1000;
-        if (distToPoint>max_dist) max_dist=distToPoint;  
+        if (distToPoint>max_dist) {max_dist=distToPoint; max_LAT = gps.location.lat(); max_LNG = gps.location.lng(); }
         if (gps.speed.kmph()>max_spd) max_spd=gps.speed.kmph();  
         if ((last_LAT != 0)and(gps.speed.kmph()>1)) {distance = distance + (float)TinyGPSPlus::distanceBetween(gps.location.lat(), gps.location.lng(), last_LAT, last_LNG) / 1000;}
         last_LAT = gps.location.lat();
@@ -107,7 +104,7 @@ void loop()
     printInt(gps.charsProcessed(), true, 6);
     printInt(gps.sentencesWithFix(), true, 10);
     printInt(gps.failedChecksum(), true, 9);
-    Serial.println(distance,3);
+    Serial.print("Max dist: "); Serial.print(max_dist,3); Serial.print(" MAX_LAT: "); Serial.print(max_LAT,6); Serial.print(" MAX_LNG: "); Serial.println(max_LNG,6); 
     serial_millis = now_millis;
   }  
 
@@ -195,7 +192,6 @@ static void smartDelay(unsigned long ms) {  // сукадилей для чте�
       //******
       now_millis = millis();    // пока читаем данные еще и кнопку опрашиваем чтобы не зависала и экран обновляем если надо
       butn_1.tick(); // опрос кнопки 1
-      butn_2.tick(); // опрос кнопки 2
       if (now_millis - lcd_millis > OLED_RENEW) {
        oled_print();
        lcd_millis = now_millis;

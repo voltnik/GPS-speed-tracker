@@ -20,7 +20,9 @@
 - контроллер Arduino Nano
 - OLED экран 128х64 I2C
 - GPS модуль UBLOX M8N
+- повышающий преобразователь 3.7В до 5В
 - 1шт кнопки
+- аккумулятор 200 мАч и более
 еще понадобится: цветной монтажный провод, макетнная плата 7x3.
 
 Подробности сборки в ВИДЕО на канале voltNik: https://youtu.be/*****
@@ -39,11 +41,14 @@
 <a id="chapter-3"></a>
 ## Материалы и компоненты
 - контроллер Arduino Nano: http://ali.pub/28sn0v резерв: http://ali.pub/2351o1
-- OLED экран 128х64
-- OLED экран 128х32
-- GPS модуль UBLOX M8N (GPS+Glonass)
-- GPS модуль MN-880  (GPS+Glonass+Compass)
-- GPS модуль NZ-GPS (только GPS)
+- OLED экран 128х64: http://ali.pub/2351lp
+- OLED экран 128х32: http://ali.pub/2dqpqe
+- GPS модуль UBLOX M8N (GPS+Glonass): http://ali.pub/2dqpsj резерв1: http://ali.pub/2dqpti резерв2: http://fas.st/iDsaRu
+- GPS модуль MN-880  (GPS+Glonass+Compass): http://fas.st/QRgENd
+- GPS модуль NZ-GPS (только GPS): http://ali.pub/2dqpvu резерв: http://ali.pub/2dqpw8
+- Повышающий преобразователь 10шт: http://ali.pub/23528u
+- Микро повышающий преобразователь 10шт: http://ali.pub/2dqpr6
+- Мини повышающий преобразователь 8шт: http://ali.pub/2dqprd
 - кнопки 25шт: http://ali.pub/28sn4y резерв: http://ali.pub/235230
 - монтажный провод 280м: http://ali.pub/27hcky
 - черный корпус: http://ali.pub/29hz44 резерв: http://ali.pub/29hz4b
